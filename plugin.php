@@ -234,5 +234,5 @@ function be_register_genesis_404_settings() {
 	$_be_genesis_404_settings = new BE_Genesis_404_Settings;	 	
 	
 }
-if( get_current_blog_id() == SITE_ID_CURRENT_SITE )
+if( !is_multisite() || get_current_blog_id() == SITE_ID_CURRENT_SITE )
 	add_action( 'genesis_admin_menu', 'be_register_genesis_404_settings'  ); 
