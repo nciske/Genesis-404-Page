@@ -3,7 +3,7 @@
  * Plugin Name: Genesis 404
  * Plugin URI: https://github.com/billerickson/Genesis-404-Plugin
  * Description: Customize the content of your 404 page.
- * Version: 1.1
+ * Version: 1.1ms
  * Author: Bill Erickson
  * Author URI: http://www.billerickson.net
  *
@@ -76,7 +76,9 @@ class BE_Genesis_404 {
 	 * @author Bill Erickson
 	 */
 	function maybe_custom_404() {
-		if( is_404() && genesis_get_option( 'content', 'genesis-404' ) ) {
+		//if( is_404() && genesis_get_option( 'content', 'genesis-404' ) ) {
+		
+		if( is_404() ) {
 		
 			remove_action( 'genesis_loop', 'genesis_404' );
 			add_action( 'genesis_loop', array( $this, 'be_genesis_404_loop' ) );
@@ -92,6 +94,11 @@ class BE_Genesis_404 {
 	 */
 	function be_genesis_404_loop() {
 		
+		if( get_current_blog_id() != SITE_ID_CURRENT_SITE )
+			switch_to_blog( SITE_ID_CURRENT_SITE );
+		
+		//echo 'HERE';
+		
 		$title = esc_attr( genesis_get_option( 'title', 'genesis-404' ) );
 		$content = genesis_get_option( 'content', 'genesis-404' );
 		
@@ -104,6 +111,8 @@ class BE_Genesis_404 {
 			echo '<div class="entry-content">' . apply_filters( 'the_content', $content ) . '</div>';
 
 		echo '</div>';
+		
+		restore_current_blog();
 	
 	}
 	
@@ -227,5 +236,6 @@ function be_register_genesis_404_settings() {
 	global $_be_genesis_404_settings;
 	$_be_genesis_404_settings = new BE_Genesis_404_Settings;	 	
 	
-}	
-add_action( 'genesis_admin_menu', 'be_register_genesis_404_settings'  ); 
+}
+if( get_current_blog_id() == SITE_ID_CURRENT_SITE )
+	add_action( 'genesis_admin_menu', 'be_register_genesis_404_settings'  ); 
