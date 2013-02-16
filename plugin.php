@@ -76,9 +76,7 @@ class BE_Genesis_404 {
 	 * @author Bill Erickson
 	 */
 	function maybe_custom_404() {
-		//if( is_404() && genesis_get_option( 'content', 'genesis-404' ) ) {
-		
-		if( is_404() ) {
+		if( ( is_404() && is_multisite() ) || ( is_404() && genesis_get_option( 'content', 'genesis-404' ) ) ) {
 		
 			remove_action( 'genesis_loop', 'genesis_404' );
 			add_action( 'genesis_loop', array( $this, 'be_genesis_404_loop' ) );
@@ -94,10 +92,8 @@ class BE_Genesis_404 {
 	 */
 	function be_genesis_404_loop() {
 		
-		if( get_current_blog_id() != SITE_ID_CURRENT_SITE )
+		if( is_multisite() && get_current_blog_id() != SITE_ID_CURRENT_SITE )
 			switch_to_blog( SITE_ID_CURRENT_SITE );
-		
-		//echo 'HERE';
 		
 		$title = esc_attr( genesis_get_option( 'title', 'genesis-404' ) );
 		$content = genesis_get_option( 'content', 'genesis-404' );
@@ -111,8 +107,9 @@ class BE_Genesis_404 {
 			echo '<div class="entry-content">' . apply_filters( 'the_content', $content ) . '</div>';
 
 		echo '</div>';
-		
-		restore_current_blog();
+
+		if ( is_multisite() )
+			restore_current_blog();
 	
 	}
 	
